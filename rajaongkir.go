@@ -13,6 +13,7 @@ import (
 const (
 	provinceEndpoint     = "/province"
 	cityEndpoint         = "/city"
+	subdistrictEndpoint  = "/subdistrict"
 	costEndpoint         = "/cost"
 	defaultClientTimeout = time.Second * 10
 )
@@ -64,6 +65,17 @@ type City struct {
 	PostalCode string `json:"postal_code"`
 }
 
+// Subdistrict stores the details of a subdistrict
+type Subdistrict struct {
+	SubdistrictID   string `json:"subdistrict_id"`
+	ProvinceID      string `json:"province_id"`
+	Province        string `json:"province"`
+	CityID          string `json:"city_id"`
+	CityName        string `json:"city"`
+	Type            string `json:"type"`
+	SubdistrictName string `json:"subdistrict_name"`
+}
+
 type provinceResponse struct {
 	Rajaongkir struct {
 		Query   query    `json:"query"`
@@ -92,6 +104,21 @@ type citiesResponse struct {
 	Rajaongkir struct {
 		Status  status `json:"status"`
 		Results []City `json:"results"`
+	} `json:"rajaongkir"`
+}
+
+type subdistrictResponse struct {
+	Rajaongkir struct {
+		Query   query       `json:"query"`
+		Status  status      `json:"status"`
+		Results Subdistrict `json:"results"`
+	} `json:"rajaongkir"`
+}
+
+type subdistrictsResponse struct {
+	Rajaongkir struct {
+		Status  status        `json:"status"`
+		Results []Subdistrict `json:"results"`
 	} `json:"rajaongkir"`
 }
 
@@ -163,6 +190,18 @@ func (r *RajaOngkir) GetCities() ([]City, error) {
 	}
 	cities := re.Rajaongkir.Results
 	return cities, nil
+}
+
+// GetSubdistricts fetches the list of subdistricts of a city
+func (r *RajaOngkir) GetSubdistricts(city string) ([]Subdistrict, error) {
+	re := &subdistrictsResponse{}
+	endpoint := fmt.Sprintf("%s?city=%s", subdistrictEndpoint, city)
+	err := r.sendRequest(http.MethodGet, endpoint, "", re)
+	if err != nil {
+		return []Subdistrict{}, err
+	}
+	subdistricts := re.Rajaongkir.Results
+	return subdistricts, nil
 }
 
 // GetCost fetches the shipping rate

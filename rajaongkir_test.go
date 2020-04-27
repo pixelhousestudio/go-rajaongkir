@@ -275,7 +275,7 @@ func TestGetCities(t *testing.T) {
 func TestGetCost(t *testing.T) {
 	ts, ro, rec := setupTest(costRes)
 	defer ts.Close()
-	ro.GetCost("153", "151", 1200, "jne")
+	ro.GetCost("153", "city", "151", "city", 1200, "jne")
 	expectedMethod := "POST"
 	expectedAPIKey := "APIKEY12345"
 	expectedEndpoint := "/cost"

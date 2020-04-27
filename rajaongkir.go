@@ -76,6 +76,19 @@ type Subdistrict struct {
 	SubdistrictName string `json:"subdistrict_name"`
 }
 
+// OriginDestination stores the details of origin & destination
+type OriginDestination struct {
+	SubdistrictID   string `json:"subdistrict_id,omitempty"`
+	ProvinceID      string `json:"province_id,omitempty"`
+	Province        string `json:"province,omitempty"`
+	CityID          string `json:"city_id,omitempty"`
+	CityName        string `json:"city_name,omitempty"`
+	City            string `json:"city,omitempty"`
+	Type            string `json:"type,omitempty"`
+	SubdistrictName string `json:"subdistrict_name,omitempty"`
+	PostalCode      string `json:"postal_code,omitempty"`
+}
+
 type provinceResponse struct {
 	Rajaongkir struct {
 		Query   query    `json:"query"`
@@ -124,11 +137,11 @@ type subdistrictsResponse struct {
 
 type costResponse struct {
 	Rajaongkir struct {
-		Query              query            `json:"query"`
-		Status             status           `json:"status"`
-		OriginDetails      City             `json:"origin_details"`
-		DestinationDetails City             `json:"destination_details"`
-		Results            []carrierService `json:"results"`
+		Query              query             `json:"query"`
+		Status             status            `json:"status"`
+		OriginDetails      OriginDestination `json:"origin_details"`
+		DestinationDetails OriginDestination `json:"destination_details"`
+		Results            []carrierService  `json:"results"`
 	} `json:"rajaongkir"`
 }
 
@@ -206,8 +219,8 @@ func (r *RajaOngkir) GetSubdistricts(city string) ([]Subdistrict, error) {
 
 // GetCost fetches the shipping rate
 // given the origin, destination, weight, and courier service
-func (r *RajaOngkir) GetCost(origin, destination string, weight int, courier string) ([]Cost, error) {
-	queryString := fmt.Sprintf("origin=%s&destination=%s&weight=%d&courier=%s", origin, destination, weight, courier)
+func (r *RajaOngkir) GetCost(origin, originType, destination, destinationType string, weight int, courier string) ([]Cost, error) {
+	queryString := fmt.Sprintf("origin=%s&originType=%s&destination=%s&destinationType=%s&weight=%d&courier=%s", origin, originType, destination, destinationType, weight, courier)
 	re := &costResponse{}
 	err := r.sendRequest(http.MethodPost, costEndpoint, queryString, re)
 	if err != nil {

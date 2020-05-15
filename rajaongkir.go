@@ -217,6 +217,18 @@ func (r *RajaOngkir) GetSubdistricts(city string) ([]Subdistrict, error) {
 	return subdistricts, nil
 }
 
+// GetSubdistrict fetches one subdistrict data
+func (r *RajaOngkir) GetSubdistrict(city, subdistrictID string) (Subdistrict, error) {
+	re := &subdistrictResponse{}
+	endpoint := fmt.Sprintf("%s?city=%s&id=%s", subdistrictEndpoint, city, subdistrictID)
+	err := r.sendRequest(http.MethodGet, endpoint, "", re)
+	if err != nil {
+		return Subdistrict{}, err
+	}
+	subdistrict := re.Rajaongkir.Results
+	return subdistrict, nil
+}
+
 // GetCost fetches the shipping rate
 // given the origin, destination, weight, and courier service
 func (r *RajaOngkir) GetCost(origin, originType, destination, destinationType string, weight int, courier string) ([]Cost, error) {
